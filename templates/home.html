@@ -1,0 +1,164 @@
+{% extends "show_data/base.html" %}
+{% block content %}
+ 
+
+<h1>{{store}}</h1>
+    {% for store_item in stores %}
+ 
+    {% if store_item == store %}
+        <a  class="btn btn-warning mb-4 mt-4" href="/?filterby=all&store={{store_item}}">{{store_item}}</a>
+    {% else %}
+    <a  class="btn btn-outline-dark mb-4 mt-4" href="/?filterby=all&store={{store_item}}">{{store_item}}</a>
+    {% endif %}
+
+{% endfor %}
+<br>
+{% if filter == 'all' %}
+<a  class="btn btn-warning mb-4" href="/?filterby=all&store={{store}}">all</a>
+{% else %}
+<a  class="btn btn-outline-dark mb-4" href="/?filterby=all&store={{store}}">all</a>
+{% endif %}
+    {% for category in categories %}
+
+    {% if category == filter %}
+        <a  class="btn btn-warning mb-4" href="/?filterby={{category}}&store={{store}}">{{category}}</a>
+    {% else %}
+        <a  class="btn btn-outline-dark mb-4" href="/?filterby={{category}}&store={{store}}">{{category}}</a>
+    {% endif %}
+
+{% endfor %}
+
+
+
+
+
+
+
+
+
+<small>Filter: {{filter}}</small>
+<p>Click on item in legend to hide / show it</p>
+<p>Prices are per kg/Liter</p>
+<!-- <small>{{ labels1 }}</small>
+<br>
+<small>{{ categories}}</small>
+<br>
+<br>
+
+
+{% for labelr in labels1 %}
+{{labelr}}
+{% endfor %}
+
+ {% for product in products %}
+    {% for key,value in product.dates.items %} 
+       <small>{{value}}</small>
+    {% endfor %}   
+    <hr> 
+{% endfor %}  -->
+
+
+
+<div>
+    <canvas id="myChart" style="height: 600px !important; background-color: rgb(247, 247, 247);"></canvas>
+ </div>
+
+    <br>
+    <br>
+
+ <button class="btn btn-warning mb-4" id="myBtn">Hide all data</button>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+<script>
+    const ctx = document.getElementById('myChart');
+    var labelsRead = [];
+    {% for labelr in labels1 %}
+        labelsRead.push('{{labelr}}');
+    {% endfor %}
+
+
+    
+    const chart =new Chart(ctx, {
+
+        data: {
+        datasets: [
+
+            {% for product in products %}
+                {% if product.category == filter or filter == 'all' %}
+                    {
+                        type: 'line',
+                        label: "{{product.name}}",
+                        data: [{% for key,value in product.dates.items %}{{value}},{% endfor %}],
+                        hidden: false
+                    },
+                {% endif %}
+            {% endfor %}
+            ],
+            labels: labelsRead
+    },
+    
+      options: {
+        responsive: true,
+        "plugins": {
+          "legend": {
+            "display": true,
+            "position": "right",
+            "align": "start"
+          }},
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+                display: true,
+                text: 'Euro pro kg / Liter / Stk'
+            }
+          }
+        }
+      }
+    });
+
+    
+    document.getElementById("myBtn").addEventListener("click", () => {
+        chart.data.datasets.forEach(function(ds) {
+
+            if (myBtn.textContent === "Hide all data") {
+                ds.hidden = true;
+            } else {
+                ds.hidden = false;
+            }  
+        });
+        chart.update();
+
+        if (myBtn.textContent === "Hide all data") {
+                myBtn.textContent = "Show all data";
+            } else {
+                myBtn.textContent = "Hide all data";
+            }  
+    });
+    
+
+
+
+  </script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js">
+
+</script>
+
+<br>
+<br>
+<br>
+
+
+
+<h5>Code (JSON)</h5>
+
+<div style="height: 250px; overflow-y: scroll;">
+<small>
+<code>{{products}}</code>
+</small>
+</div>
+
+{% endblock content %}

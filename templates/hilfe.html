@@ -1,0 +1,309 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container">
+  <div
+    class="jumbotron"
+    style="
+      background-color: #f7f7f7;
+      border-style: solid;
+      border-color: #cac9c9;
+      border-width: 1px;
+    "
+  >
+    <h1 class="display-4" style="font-size: 4vw">
+      <i class="icon-group"></i> Ich wachse nur mit dir!
+    </h1>
+    <p class="lead">Allein weiß ich vieles nicht</p>
+
+    <hr class="my-4" />
+    <p>
+      Klar, diese Seite funktioniert erstmal ganz gut. Bisher befinden sich aber
+      erst ein Baumarkt, zwei Drogerien und zwei LEHs im WebScraping-Sortiment.
+      Hilf gern dabei mit, mehr Daten von weiteren Online-Stores zu sammeln und
+      diese anschaulich darzustellen.
+    </p>
+  </div>
+
+  <h2>APIs</h2>
+  <p>
+    Die beiden Supermärkte <em>Kaufland</em> und <em>Netto</em> sowie der
+    Baumarkt <em>Hellweg</em> und die beiden Drogerien <em>Rossmann</em> und
+    <em>Müller</em> lassen sich ohne APIs scrapen. Dazu nutze ich eine einfache
+    <em>request</em>, um mir Online-Shop-Daten ausgeben zu lassen. Damit bin ich
+    aber bisher auch nur semi zufrieden.
+    <br />
+    Unabhängig davon bieten die Online-Shops von z.B. Kaufland oder LIDL
+    möglichen Kram an, den es im Supermarkt selbst gar nicht gibt. Ich würde
+    gern auf die API der jeweiligen Supermärkte zugreifen, um gezielt nach
+    Produkten des täglichen Lebens zu suchen. <br />
+    <strong>Erfahre hier detaillierter, wo ich Hilfe benötige.</strong>
+  </p>
+  <div id="accordion">
+    <div class="card">
+      <div
+        class="card-header"
+        id="headingOne"
+        style="background-color: #ffc107"
+      >
+        <h5 class="mb-0">
+          <button
+            class="btn btn-link text-dark"
+            data-toggle="collapse"
+            data-target="#collapse1"
+            aria-expanded="true"
+            aria-controls="collapse1"
+          >
+            <strong>LIDL</strong>
+          </button>
+        </h5>
+      </div>
+
+      <div
+        id="collapse1"
+        class="collapse show"
+        aria-labelledby="heading1"
+        data-parent="#accordion"
+      >
+        <div class="card-body">
+          Dank des Projekts
+          <a
+            href="https://github.com/badlogic/heissepreise/blob/main/stores/lidl.js"
+            >heise Preise</a
+          >
+          kenne ich die URL für den API-Zugriff auf den österreichischen LIDL.
+          <br />
+          Dieser sieht wie folgt aus (beispielhaft mit max. 5 Artikeln):
+
+          <p><code>https://www.lidl.at/p/api/gridboxes/AT/de/?max=5</code></p>
+
+          Beim Durchforsten der Daten (beim Abruf von z.B. 32.000 Produkten)
+          fällt auf, dass hier auch Artikel, wie <em>Gurken</em> oder
+          <em>Mehl</em> auftauchen. <br /><br />
+
+          Ein gleicher Abruf ist auch für Deutschland möglich:
+
+          <p><code>https://www.lidl.de/p/api/gridboxes/DE/de/?max=5</code></p>
+
+          Beim Durchforsten der Daten fällt jedoch auf, dass LIDL hier vor allem
+          die Produkte des Non-LIDL-Non-Food-Online-Shops ausgibt. Dieser
+          besteht jedoch aus einer Menge Zeug, welches es nicht im Supermarkt
+          gibt (Gardinen, Werkbänke, Gläser etc).
+          <br />
+          <br />
+
+          <strong
+            >Wer kann sich an die LIDL-API setzen und Produkte, wie Gurken oder
+            Saft, ausgeben statt "XXL ROLLO MINT GRÜN" ?</strong
+          >
+          <br />
+          <br />
+
+          <div class="d-flex flex-row-reverse align-items-baseline">
+            <a
+              class="btn btn-secondary"
+              href="https://github.com/SebastianChristoph/preischeck"
+              target="_blank"
+              >Hier geht's zur GIT-Repo</a
+            >
+            <p class="mr-4"><strong>Du möchtest helfen?</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="heading2" style="background-color: #ffc107">
+        <h5 class="mb-0">
+          <button
+            class="btn btn-link collapsed text-dark"
+            data-toggle="collapse"
+            data-target="#collapse2"
+            aria-expanded="false"
+            aria-controls="collapse2"
+          >
+            <strong>ALDI</strong>
+          </button>
+        </h5>
+      </div>
+      <div
+        id="collapse2"
+        class="collapse"
+        aria-labelledby="heading2"
+        data-parent="#accordion"
+      >
+        <div class="card-body">
+          Ich hab es noch nicht geschafft ALDI zu scrapen. <br />
+          <br />
+          <strong
+            >Wer schafft es, das ALDI-Sortiment via API abzugreifen und
+            auszuwerten?</strong
+          >
+          <div class="d-flex flex-row-reverse align-items-baseline">
+            <a
+              class="btn btn-secondary"
+              href="https://github.com/SebastianChristoph/preischeck"
+              target="_blank"
+              >Hier geht's zur GIT-Repo</a
+            >
+            <p class="mr-4"><strong>Du möchtest helfen?</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header" id="heading3" style="background-color: #ffc107">
+        <h5 class="mb-0">
+          <button
+            class="btn btn-link collapsed text-dark"
+            data-toggle="collapse"
+            data-target="#collapse3"
+            aria-expanded="false"
+            aria-controls="collapse3"
+          >
+            <strong>REWE</strong>
+          </button>
+        </h5>
+      </div>
+      <div
+        id="collapse3"
+        class="collapse"
+        aria-labelledby="heading3"
+        data-parent="#accordion"
+      >
+        <div class="card-body">
+          Ich hab es noch nicht geschafft REWE zu scrapen. <br />
+          <br />
+          <strong
+            >Wer schafft es, das REWE-Sortiment via API abzugreifen und
+            auszuwerten?</strong
+          >
+          <div class="d-flex flex-row-reverse align-items-baseline">
+            <a
+              class="btn btn-secondary"
+              href="https://github.com/SebastianChristoph/preischeck"
+              target="_blank"
+              >Hier geht's zur GIT-Repo</a
+            >
+            <p class="mr-4"><strong>Du möchtest helfen?</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="container mt-4">
+  <h2>Visualisierung</h2>
+  <div id="accordion">
+    <div class="card">
+      <div
+        class="card-header"
+        id="heading_visual1"
+        style="background-color: #ffc107"
+      >
+        <h5 class="mb-0">
+          <button
+            class="btn btn-link text-dark"
+            data-toggle="collapse"
+            data-target="#collapse_visual1"
+            aria-expanded="false"
+            aria-controls="collapse_visual1"
+          >
+            <strong>Chart.js</strong>
+          </button>
+        </h5>
+      </div>
+
+      <div
+        id="collapse_visual1"
+        class="collapse"
+        aria-labelledby="heading_visual1"
+        data-parent="#accordion"
+      >
+        <div class="card-body">
+          Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+          terry richardson ad squid. 3 wolf moon officia aute, non cupidatat
+          skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.
+          Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid
+          single-origin coffee nulla assumenda shoreditch et. Nihil anim
+          keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
+          sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings
+          occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt
+          you probably haven't heard of them accusamus labore sustainable VHS.
+          <div class="d-flex flex-row-reverse align-items-baseline">
+            <a class="btn btn-secondary" href="#">Hier geht's zur GIT-Repo</a>
+            <p class="mr-4"><strong>Du möchtest helfen?</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div
+        class="card-header"
+        id="heading_visual2"
+        style="background-color: #ffc107"
+      >
+        <h5 class="mb-0">
+          <button
+            class="btn btn-link collapsed text-dark"
+            data-toggle="collapse"
+            data-target="#collapse_visual2"
+            aria-expanded="false"
+            aria-controls="collapse_visual2"
+          >
+            <strong>Tables</strong>
+          </button>
+        </h5>
+      </div>
+      <div
+        id="collapse_visual2"
+        class="collapse"
+        aria-labelledby="heading_visual2"
+        data-parent="#accordion"
+      >
+        <div class="card-body">
+          Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+          terry richardson ad squid. 3 wolf moon officia aute, non cupidatat
+          skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod.
+          Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid
+          single-origin coffee nulla assumenda shoreditch et. Nihil anim
+          keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
+          sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings
+          occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt
+          you probably haven't heard of them accusamus labore sustainable VHS.
+          <div class="d-flex flex-row-reverse align-items-baseline">
+            <a class="btn btn-secondary" href="#">Hier geht's zur GIT-Repo</a>
+            <p class="mr-4"><strong>Du möchtest helfen?</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<!-- <div class="card">
+    <h5 class="card-header">Hi</h5>
+    <div class="card-body">
+      <h5 class="card-title">Title</h5>
+
+      <p class="card-text">Text1</p>
+
+      <p>
+        <a
+          class="btn btn-warning"
+          data-toggle="collapse"
+          href="#help1"
+          role="button"
+          aria-expanded="false"
+          aria-controls="collapseExample"
+        >
+          Read more
+        </a>
+      </p>
+      <div class="collapse" id="help1">
+        <div class="card card-body">Text2</div>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+{% endblock content %}

@@ -1,0 +1,12 @@
+{
+  "content": [
+    {
+      "title": "Blog Title",
+      "category": "Update",
+      "text_header": "HeaderheaderHeader",
+      "text_readmore": "ReadmoreText <strong>Hier fett</strong>",
+      "date": "04.10.2023",
+      "fontawesome_icon": "icon-cloud-upload"
+    }
+  ]
+}

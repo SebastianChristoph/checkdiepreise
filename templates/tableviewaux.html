@@ -1,0 +1,61 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container">
+  <div
+    class="jumbotron"
+    style="
+      background-color: #f7f7f7;
+      border-style: solid;
+      border-color: #cac9c9;
+      border-width: 1px;
+    "
+  >
+    <h1 class="display-4" style="font-size: 4vw">
+      Nur noch ein kleiner Schritt...
+    </h1>
+
+    <hr class="my-4" />
+    <p>
+      Damit dir die Daten angezeigt werden können, wird im Hintergrund eine 5MB
+      JSON-Datei geladen. <br />Solltest du also mit mobilen Daten online sein,
+      ist das dein Hinweis.
+    </p>
+    <p class="lead">
+      <a
+        class="btn btn-warning btn-lg"
+        id="linki"
+        href="/tableview_new/?filterby=all&store=Kaufland&selectedProduct=&search="
+        >Laden Daten</a
+      >
+    </p>
+  </div>
+
+  <div
+    id="spinner"
+    class="spinner-grow text-warning"
+    role="status"
+    style="display: none"
+    ;
+  >
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<script>
+  // Importiere das Element mit der ID "spinner"
+  const spinner = document.querySelector("#spinner");
+
+  // Importiere das Element mit der ID "linki"
+  const linki = document.querySelector("#linki");
+
+  // Füge einen Event-Listener für den Klick auf den Link hinzu
+  linki.addEventListener("click", function () {
+    // Setze die Anzeige des Spinners auf "block"
+    spinner.style.display = "block";
+
+    // Setze die Anzeige des Links auf "none"
+    linki.style.display = "none";
+  });
+</script>
+
+{% endblock content %}

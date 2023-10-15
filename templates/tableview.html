@@ -1,0 +1,223 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-6">
+      <!-- Dropdown Stores-->
+      <div class="dropdown">
+        <h6 class="dropdown-header">Store</h6>
+        <button
+          class="btn btn-warning dropdown-toggle ml-4"
+          type="button"
+          id="dropdownMenuButton"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          {{ context.store }}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          {% for store_item in context.stores %}
+          <a
+            class="dropdown-item linki"
+            href="/tableview/?filterby=all&store={{store_item}}&selectedProduct=&search="
+            >{{store_item}}</a
+          >
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Dropdown Categories-->
+      <div class="dropdown mt-2">
+        <h6 class="dropdown-header">Kategorie</h6>
+        <button
+          class="btn btn-secondary dropdown-toggle ml-4"
+          type="button"
+          id="dropdownMenuButton"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          {% if context.filter == 'all' %} all {% else %} {{context.filter}}
+          {%endif%}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a
+            class="dropdown-item linki"
+            href="/tableview/?filterby=all&store={{context.store}}&selectedProduct=&search="
+            >all</a
+          >
+          <div class="dropdown-divider"></div>
+          {% for category in context.categories %}
+          <a
+            class="dropdown-item linki"
+            href="/tableview/?filterby={{category}}&store={{context.store}}&selectedProduct=&search="
+            >{{category}}</a
+          >
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Spinner -->
+      <div
+        id="spinner"
+        class="spinner-grow text-warning"
+        role="status"
+        style="display: none"
+        ;
+      >
+        <span class="sr-only">Loading...</span>
+      </div>
+
+      <!-- Search Field-->
+      <div class="ml-4">
+        <div>&nbsp;</div>
+        <form
+          action="/tableview/?filterby=all&store={{context.store}}&selectedProduct=&search="
+          ,
+          method="POST"
+        >
+          <input
+            type="text"
+            id="fname"
+            name="searchProduct"
+            placeholder="Produkt in {{context.store}}"
+          />
+          <input type="submit" value="🔍" />
+        </form>
+      </div>
+      <br />
+      <!-- End Spalte1-->
+    </div>
+    <div class="col-md-6">
+      {% if context.selectedProductImageURL %}
+      <img
+        src="{{context.selectedProductImageURL}}"
+        class="img-fluid"
+        style="max-width: 150px !important"
+      />
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<canvas
+  id="myChart"
+  style="
+    height: 100px !important;
+    width: 55vw !important;
+    background-color: rgb(247, 247, 247);
+  "
+>
+</canvas>
+
+<!-- TABLE VIEW MOBILE-->
+<ul class="list-group" id="tableviewmobile">
+  {% for product in context.products %} {% if product.category == context.filter
+  or context.filter == 'all' %} {% if (context.search|upper in
+  product.name|upper) and ('"' not in product.name) %} {% if
+  context.selectedProduct == product.name %}
+  <!--selected product on top -->
+  <li class="list-group-item list-group-item-warning">
+    <a
+      href="/tableview/?filterby={{context.filter}}&store={{context.store}}&selectedProduct={{product.name  | replace('%', '%25')| replace('?', '%3F') | replace('#', '%23')| replace('+', '%2B')| replace('&', '%26')}}&search={{context.search}}"
+      >{{product.name}}
+    </a>
+  </li>
+  {%else%}
+  <li class="list-group-item">
+    <a
+      href="/tableview/?filterby={{context.filter}}&store={{context.store}}&selectedProduct={{product.name  | replace('%', '%25')| replace('?', '%3F') | replace('#', '%23')| replace('+', '%2B')| replace('&', '%26')}}&search={{context.search}}"
+      >{{product.name}}
+    </a>
+  </li>
+  {% endif %} {% endif %} {% endif %} {% endfor %}
+</ul>
+
+<!-- TABLE VIEW-->
+<div style="height: 400px; overflow-y: scroll" id="tableview">
+  <table
+    class="table table-sm table-hover table-striped"
+    style="table-layout: fixed"
+  >
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Gef. durch</th>
+        <th scope="col">Kategorie</th>
+        <th scope="col">Link zum Shop</th>
+        {% for label in context.labelsTable %}
+        <th scope="col"><small>{{label}}</small></th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in context.products %} {% if product.category
+      ==context.filter or context.filter == 'all' %} {% if context.search|upper
+      in product.name|upper and ('"' not in product.name)%}
+      <tr>
+        <td style="word-wrap: break-word; max-width: 50px">
+          <a
+            href="/tableview/?filterby={{context.filter}}&store={{context.store}}&selectedProduct={{product.name  | replace('%', '%25')| replace('?', '%3F') | replace('#', '%23')| replace('+', '%2B')| replace('&', '%26')}}&search={{context.search}}"
+            >{{product.name}}
+          </a>
+        </td>
+        <td style="word-wrap: break-word; max-width: 30px">
+          {{product.found_by_keyword}}
+        </td>
+        <td style="word-wrap: break-word; max-width: 30px">
+          {{product.category}}
+        </td>
+        <td style="word-wrap: break-word; max-width: 30px">
+          {% if (product.original_link != "") and (product.original_link != "#")
+          %}
+          <a href="{{product.original_link}}" target="_blank">Link</a>
+          {% else %} No link {% endif %}
+        </td>
+        {% for key,value in product.dates.items() %}
+        <td>{{value}}</td>
+        {% endfor %}
+      </tr>
+      {% endif %} {% endif %} {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script type="text/javascript">
+  const labels = "{{context.labels}}";
+  const selectedProduct = "{{context.selectedProduct|safe}}";
+  const selectedProductData = "{{context.selectedProductData}}";
+</script>
+<script
+  src="{{ url_for('static', filename='JS/chart.js') }}"
+  type="text/javascript"
+></script>
+<script src="{{ url_for('static', filename='JS/spinner.js') }}"></script>
+
+<!--   
+<script>
+    
+    document.getElementById("myBtn").addEventListener("click", () => {
+        chart.data.datasets.forEach(function(ds) {
+
+            if (myBtn.textContent === "Hide all data") {
+                ds.hidden = true;
+            } else {
+                ds.hidden = false;
+            }  
+        });
+        chart.update();
+
+        if (myBtn.textContent === "Hide all data") {
+                myBtn.textContent = "Show all data";
+            } else {
+                myBtn.textContent = "Hide all data";
+            }  
+    });
+    
+
+  </script> -->
+
+{% endblock content %}

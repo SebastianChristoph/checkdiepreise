@@ -1,0 +1,85 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container">
+  <h4>Last Testing log:</h4>
+
+  <br />
+  <p style="font-family: 'Courier New', Arial">{{log_string}}</p>
+  <br />
+  <h4>Blog Entry</h4>
+
+  <form action="{{url_for('home')}}" method="POST">
+    <input
+      type="text"
+      name="title"
+      placeholder="Title"
+      required
+      size="80"
+      value="CoolTitel"
+    /><br />
+    <input
+      type="text"
+      name="category"
+      placeholder="Category"
+      required
+      size="30"
+      value="Cat"
+    /><br />
+
+    <br />
+    <br />
+
+    <label for="story">Anfangstext</label><br />
+    <textarea
+      id="story"
+      name="text1"
+      rows="15"
+      cols="70"
+      value="123rt"
+      required
+    >
+    </textarea>
+
+    <br />
+    <br />
+
+    <label for="story">Read more text</label><br />
+    <textarea
+      id="story"
+      name="text2"
+      rows="8"
+      cols="70"
+      value="dkfjdlkfjdlkf"
+      required
+    ></textarea>
+
+    <br />
+    <br />
+
+    <p>Symbol</p>
+
+    <input
+      type="radio"
+      id="upload"
+      name="icon"
+      value="icon-cloud-upload"
+      required
+    />
+    <label for="upload"><i class="icon-cloud-upload"></i></label><br />
+
+    <input
+      type="radio"
+      id="question"
+      name="icon"
+      value="icon-question"
+      required
+    />
+    <label for="question"><i class="icon-question"></i></label><br />
+    <input type="radio" id="bars" name="icon" value="icon-signal" required />
+    <label for="bars"><i class="icon-signal"></i></label>
+    <br />
+    <input type="submit" value="OK" />
+  </form>
+</div>
+
+{% endblock content %}

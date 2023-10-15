@@ -1,0 +1,11 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container">
+  <h4>Moin Sehb</h4>
+  <form action="{{url_for('blogentry')}}" , method="POST">
+    <input type="password" id="pw" name="pw" />
+    <input type="submit" value="Admin Zugang" />
+  </form>
+</div>
+
+{% endblock content %}
