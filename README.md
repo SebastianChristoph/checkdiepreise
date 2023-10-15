@@ -7,7 +7,7 @@ Die jeweiligen scraper-scripts werden täglich am morgen auf einem Server ausgef
 
 Die JSON jedes Stores sieht wie folgt aus:
 
-```
+```json
 { "store": "STORENAME", "store_units" : "pro Stk.", "products": [], "historical_labels" : ["01-01-2021", "02-01-2021"] }
 ```
 
