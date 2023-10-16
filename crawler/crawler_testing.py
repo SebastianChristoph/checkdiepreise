@@ -19,6 +19,11 @@ found_products = [
                            {"imageURL" : "http...", 
                          "name" : "Neuberger",
                          "price" : "3.999€",
+                         "original_link" : "www.."},
+
+                           {"imageURL" : "http...", 
+                         "name" : "Apfelbert",
+                         "price" : "18.90€",
                          "original_link" : "www.."}
                ]
 
