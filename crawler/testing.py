@@ -4,9 +4,40 @@ import os
 import datetime
 
 
+
+def clean_price_text( price_text):
+        try:
+            cleaned_price = str(price_text)
+            cleaned_price = cleaned_price.replace(",",".")
+
+            if "=" in cleaned_price:
+                cleaned_price = cleaned_price.split("=")[-1]
+
+            match = re.search(r'\d+(\.\d*)?', cleaned_price)
+
+            if match: 
+                cleaned_price = match.group()
+                if(cleaned_price[-1] == "."):
+                    cleaned_price = cleaned_price[:-1]
+                
+                return cleaned_price
+            else:
+                print("No cleaning possible for:", price_text)
+            
+                return "0"
+            
+        except Exception as e:
+            print("ERROR IN CLEANING")
+            print(e)
+            print("PRICE IN:", price_text, " / PRICE IN TYPE:", type(price_text))
+            print("----------------")
+        
+
 def is_numeric(value):
+
+    price_cleaned = clean_price_text(value)
     numeric_pattern = re.compile(r'^[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?$')
-    return bool(numeric_pattern.match(str(value)))
+    return bool(numeric_pattern.match(str(price_cleaned)))
 
 now = datetime.datetime.now()
 formatted_datetime = now.strftime("%H:%M Uhr, %d-%m-%Y")
@@ -18,6 +49,7 @@ def assert_HELLWEG():
     print("*********************************")
     print("Start assert HELLWEG...")
     log_string += "Hellweg: "
+
     try:
         result_product = scraper_HELLWEG.getting_articles_from_shop("holz", show_product_to_search=True)[0]
         assert result_product["imageURL"] != "", "No data for imageURL"
@@ -112,12 +144,15 @@ def assert_ROSSMANN():
 
 
 
+print("_____________________________________________________")
+print("Start ASSERTIONS")
 assert_HELLWEG()
 assert_KAUFLAND()
 assert_MUELLER()
 assert_NETTO()
 assert_ROSSMANN()
 
+print("_____________________________")
 
 cwd = os.getcwd()
 if "home" in cwd:
@@ -125,7 +160,8 @@ if "home" in cwd:
     with open("/home/SebastianChristoph/mysite/static/crawler/testing_log.txt", "w", encoding = "UTF-8") as file:
         file.write(log_string)
 else:
-    print("LOG:")
+    print("LOG:\n")
     print(log_string)
+
 print("___________________________________")
 print("End of Assertion.")

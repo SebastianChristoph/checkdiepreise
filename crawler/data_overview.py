@@ -14,6 +14,7 @@ info_dict = {
     }
 
 stores = ["Mueller", "Rossmann", "Hellweg", "Netto", "Kaufland"]
+#stores = ["Testing"]
 
 print(cwd)
 def get_current_date():
@@ -63,8 +64,13 @@ for store in stores:
     else:
         # local path
         print("RUNNING LOCALLY")
-        path_to_store_json = "crawler/" + store.upper() + ".json"
-        path_to_info_json = "crawler/info.json"
+
+        if(store == "Testing"):
+            path_to_store_json = "testingoutput.json"
+            path_to_info_json = "crawler/info.json"
+        else:
+            path_to_store_json = "crawler/" + store.upper() + ".json"
+            path_to_info_json = "crawler/info.json"
     
     print("Load JSON into Dict", end = "")
     with open(path_to_store_json, encoding="utf-8") as json_file:
@@ -89,7 +95,7 @@ for store in stores:
 
                 price_change = round(price_today - price_yesterday, 2)
 
-                if price_today != 0:
+                if price_today != 0 and price_yesterday != 0:
                     if price_change != 0:
                         direction = "u"
 
@@ -125,19 +131,21 @@ for store in stores:
                             "store" : store
                         }
 
-                        if price_percentage > max_up_price_change_percent:
-                            max_up_price_change_percent = price_percentage
-                            max_up_price_change_product = product_changes
+                        if price_percentage < 90:
+                            if price_percentage > max_up_price_change_percent:
+                                max_up_price_change_percent = price_percentage
+                                max_up_price_change_product = product_changes
                         
-                        if price_percentage < max_down_price_change_percent:
-                            max_down_price_change_percent = price_percentage
-                            max_down_price_change_product = product_changes
+                        if price_percentage > -90:
+                            if price_percentage < max_down_price_change_percent:
+                                max_down_price_change_percent = price_percentage
+                                max_down_price_change_product = product_changes
 
                         store_dict_to_merge["changes_to_yesterday"].append(product_changes)
                 else:
                     continue
             except Exception as e:
-                print("not working", price_today, price_yesterday, e)
+                print(" not working", price_today, price_yesterday, e)
                 continue
 
 

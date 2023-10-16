@@ -23,8 +23,14 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
                 print(">> soup saved in testing_log_ROSSMANN.html")
         else:
             with open("testing_log_ROSSMANN.html", "w", encoding = "UTF-8") as file:
-                file.write(soup.prettify())
+                file.write(list_products[0].prettify())
                 print(">> div class='rm-grid__conent' saved in testing_log_ROSSMANN.html")
+            
+            # save soup
+            with open("testing_log_SOUP_ROSSMANN.html", "w", encoding = "UTF-8") as file:
+                file.write(soup.prettify())
+                print("soup saved in testing_log_SOURCE-ROSSMANN.html")
+
 
         print("Found products:", len(list_products))
 
@@ -39,7 +45,11 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
 
             # PRICE
             try:
-                price = product.find("div", class_ = "rm-price__base").text.strip()
+                priceWrapper = product.find("div", class_ = "rm-tile-product")
+                price = priceWrapper.get("data-product-price").strip()
+                if price == "":
+                    continue
+                #price = product.find("div", class_ = "rm-price__base").text.strip()
             except:
                 continue
 
@@ -52,11 +62,29 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
                 imageURL = ""
             
             # SHOP LINK
+            foundShopLink = False
             try:
                 original_link = product.find("a", class_="rm-tile-product__headline").get("href")
                 original_link = "https://www.rossmann.de" + original_link.strip()
+                foundShopLink = True
             except:
+                foundShopLink = False
+            
+            if foundShopLink == False:
+                print("found no headlone link")
                 original_link = ""
+                try:
+                    linklist = product.findall("a", class_="rm-breadcrumb__link")
+                    for link in linklist:
+                        print("*****")
+                        print(link)
+                        href = link.get("href")
+                        print(href)
+                        if "/de/" in href:
+                            original_link = "https://www.rossmann.de" + href
+                            break
+                except:
+                    original_link = ""
 
         except:
             continue
@@ -71,4 +99,3 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
         list_of_found_products.append(product_dict)
 
     return list_of_found_products
-

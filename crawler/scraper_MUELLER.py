@@ -25,6 +25,11 @@ def getting_articles_from_shop(poduct_to_search,  show_product_to_search = False
         with open("testing_log_MUELLER.html", "w", encoding = "UTF-8") as file:
             file.write(list_products[0].prettify())
             print(">> div class='mu-product-list__item' saved in testing_log_MUELLER.html")
+        
+        ## saving source?
+        with open("testing_log_SOURCE_MUELLER.html", "w", encoding = "UTF-8") as file:
+            file.write(soup.prettify())
+            print(">> soup saved in testing_log_SOURCE_MUELLER.html")
 
 
         print("Found products:", len(list_products))
@@ -73,3 +78,5 @@ def getting_articles_from_shop(poduct_to_search,  show_product_to_search = False
         list_of_found_products.append(product_dict)
     
     return list_of_found_products
+
+

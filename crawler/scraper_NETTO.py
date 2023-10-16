@@ -22,6 +22,11 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
                with open("testing_log_NETTO.html", "w", encoding = "UTF-8") as file:
                     file.write(list_products[0].prettify())
                     print("li class='product-list__item' saved in testing_log_NETTO.html")
+
+               # save source
+               with open("testing_log_SOURCE_NETTO.html", "w", encoding = "UTF-8") as file:
+                    file.write(soup.prettify())
+                    print("soup saved in testing_log_source_NETTO.html")
           
           print("Found products:", len(list_products))
      
@@ -35,15 +40,19 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
                     continue
 
                # PRICE
-               found_base_price = False
-               try:
-                    price= product.find("span", class_="product-property__base-price").text.strip()
-                    found_base_price = True
-               except:
-                    found_base_price  = False
+               # found_base_price = False
+               # try:
+               #      price= product.find("span", class_="product-property__base-price").text.strip()
+               #      found_base_price = True
+               # except:
+               #      found_base_price  = False
 
-               if found_base_price == False:
+               # if found_base_price == False:
+               
+               try:
                     price= product.find("span", class_="product__current-price--digits-before-comma").text.strip()
+               except:
+                    continue
                
                # SHOP LINK
                try:

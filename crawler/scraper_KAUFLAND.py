@@ -20,6 +20,13 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
             file.write(list_products[0].prettify())
             print(">> article class='product' saved in testin_log_KAUFLAND.html")
             print("Found products:", len(list_products))
+        
+        # save soup
+        with open("testing_log_SORCE_KAUFLAND.html", "w", encoding = "UTF-8") as file:
+            file.write(soup.prettify())
+            print("soup saved in testing_log_SOURCE_KAUFLAND.html")
+        
+        print("Found products:", len(list_products))
 
 
     for product in list_products:
@@ -48,14 +55,14 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
         found_base_price = False
         try:
            
-            try:
-                product_base_price = product.find("div", class_="product__base-price").text.strip()
-                found_base_price = True
-                price = product_base_price
-            except:
-                found_base_price = False
+            # try:
+            #     product_base_price = product.find("div", class_="product__base-price").text.strip()
+            #     found_base_price = True
+            #     price = product_base_price
+            # except:
+            #     found_base_price = False
 
-            if(found_base_price == False):
+            # if(found_base_price == False):
                 price = product.find("div", class_="price").text.strip()
               
         except:
@@ -75,4 +82,3 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
         list_of_found_products.append(product_dict)
 
     return list_of_found_products
-

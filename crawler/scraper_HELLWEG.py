@@ -16,11 +16,19 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
     if show_product_to_search:
         if(len(list_products) == 0):
             print(">> FOUND NO PRODUCTS!")
+        
+        else:
 
-        print("div class='product-box' saved in testing_log_HELLWEG.html")
+            print("div class='product-box' saved in testing_log_HELLWEG.html")
+            with open("testing_log_HELLWEG.html", "w", encoding = "UTF-8") as file:
+                file.write(list_products[0].prettify())
+            
+            #save soup
+            print("soup saved in testing_log_SOURCE_HELLWEG.html")
+            with open("testing_log_SOURCE_HELLWEG.html", "w", encoding = "UTF-8") as file:
+                file.write(soup.prettify())
+        
         print("Found products:", len(list_products))
-        with open("testing_log_HELLWEG.html", "w", encoding = "UTF-8") as file:
-            file.write(list_products[0].prettify())
 
     for product in list_products:
         try:
