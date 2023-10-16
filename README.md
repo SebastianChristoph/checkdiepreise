@@ -37,7 +37,7 @@ In der `mapper.py` liegt ein Dictionary mit den derzeitigen Mappings bzw Suchbeg
 
 ## Flask
 
-Zur Visualisierung der Daten wird **Chart.js** und im backend **Flask** genutzt. Der Code ist *nicht* teil dieser Repo.
+Zur Visualisierung der Daten wird **Chart.js** sowie **datatables.net** und im backend **Flask** genutzt. Der frontend-Code ist *nicht* teil dieser Repo.
 
 ## benötigte Module
 
