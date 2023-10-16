@@ -1,4 +1,4 @@
-import scraper_HELLWEG, scraper_KAUFLAND, scraper_MUELLER, scraper_NETTO, scraper_ROSSMANN
+import scraper_HELLWEG, scraper_KAUFLAND, scraper_MUELLER, scraper_NETTO, scraper_ROSSMANN, scraper_GLOBUS
 import re
 import os
 import datetime
@@ -142,6 +142,24 @@ def assert_ROSSMANN():
     log_string += "Done. \n"
     print("done")
 
+def assert_GLOBUS():
+    global log_string
+    print("*********************************")
+    print("Start assert GLOBUS...")
+    log_string += "GLOBUS: "
+    try:
+        result_product = scraper_GLOBUS.getting_articles_from_shop("kartoffel", show_product_to_search=True)[0]
+        assert result_product["imageURL"] != "", "No data for imageURL"
+        assert result_product["name"] != "", "No data for name"
+        assert result_product["price"] != "", "No data for price"
+        assert is_numeric(result_product["price"]) == True, f"Price {result_product['price']}is not numeric"
+        assert result_product["original_link"] != "", "No data for original link"
+    except Exception as e:
+        print("ERROR")
+        log_string += str(e) + "\n"
+        print(e)
+    log_string += "Done. \n"
+    print("done")
 
 
 print("_____________________________________________________")
@@ -151,6 +169,7 @@ assert_KAUFLAND()
 assert_MUELLER()
 assert_NETTO()
 assert_ROSSMANN()
+assert_GLOBUS()
 
 print("_____________________________")
 

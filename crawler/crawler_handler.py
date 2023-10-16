@@ -19,7 +19,8 @@ class CrawlerHandler:
         self.path_to_store_json = ""
         self.mapper_categories = {
             "drogerie" : mapper.mapping_drogerie,
-            "baumarkt" : mapper.mapping_baumarkt
+            "baumarkt" : mapper.mapping_baumarkt,
+            "biocompany" : mapper.mapping_biocompany
         }
         self.not_cleaned_prices = 0
 

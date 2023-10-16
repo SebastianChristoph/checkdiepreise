@@ -307,3 +307,7 @@ mapping_drogerie  = {
     "nahrungsergänzungsmittel": "Gesundheit",
     "medizinprodukte": "Gesundheit"
 }
+
+mapping_biocompany = {
+    "Angebot" : "Angebot"
+}
