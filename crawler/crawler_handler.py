@@ -74,6 +74,7 @@ class CrawlerHandler:
         self.t0 = time.time()
         today = datetime.now()
         return today.strftime("%d-%m-%Y")
+    
 
     def get_yesterday_date(self):
         yesterday = datetime.now() - timedelta(days=1)

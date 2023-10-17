@@ -61,11 +61,15 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
         
             # PRICE
             try:
-                price = product.find("div", class_ = "product-price").text.strip()
+                priceWrapper = product.find("div", class_ = "product-price")
+                price = priceWrapper.text.strip()
+                if "%" in price:
+                    spans = priceWrapper.find_all("span")
+                    price = spans[-1].text
+                       
                 if "{" in price:
                     continue
-            except:
-                print("error")
+            except Exception as e:
                 continue
 
             product_dict = {

@@ -131,15 +131,15 @@ for store in stores:
                             "store" : store
                         }
 
-                        if price_percentage < 90:
-                            if price_percentage > max_up_price_change_percent:
-                                max_up_price_change_percent = price_percentage
-                                max_up_price_change_product = product_changes
-                        
-                        if price_percentage > -90:
-                            if price_percentage < max_down_price_change_percent:
-                                max_down_price_change_percent = price_percentage
-                                max_down_price_change_product = product_changes
+                    
+                        if price_percentage > max_up_price_change_percent:
+                            max_up_price_change_percent = price_percentage
+                            max_up_price_change_product = product_changes
+                    
+                    
+                        if price_percentage < max_down_price_change_percent:
+                            max_down_price_change_percent = price_percentage
+                            max_down_price_change_product = product_changes
 
                         store_dict_to_merge["changes_to_yesterday"].append(product_changes)
                 else:
