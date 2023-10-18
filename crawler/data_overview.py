@@ -13,7 +13,7 @@ info_dict = {
     "max_up_product" : {}
     }
 
-stores = ["Mueller", "Rossmann", "Hellweg", "Netto", "Kaufland", "Biocompany", "Globus"]
+stores = ["Mueller", "Rossmann", "Hellweg", "Netto", "Kaufland", "Biocompany", "Globus", "Rewe"]
 #stores = ["Testing"]
 
 print(cwd)

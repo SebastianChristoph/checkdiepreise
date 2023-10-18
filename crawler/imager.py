@@ -37,7 +37,14 @@ def merge_product_image(background, product_image_url,  x):
     
 def draw_text(image, text, position, text_color=(0,0,0), font=None, font_size = 15):
     draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype(r'crawler\Arial.ttf', font_size)  
+
+    if "home" in cwd:
+        path_to_font = "/home/SebastianChristoph/mysite/static/crawler/Arial.ttf"
+    else:
+        path_to_font = "crawler\\Arial.ttf"
+
+
+    font = ImageFont.truetype(path_to_font, font_size)  
     draw.text(position, text, fill=text_color, font=font)
 
 def insert_logo(background, store, x):
@@ -85,8 +92,6 @@ def draw_gewinner(price_today, price_yesterday, change_rel, change_abs, product_
     draw_text(background_image, str(change_rel) + "%", (270, 580), font_size=20, text_color=(65,161,34))
 
 def draw_verlierer(price_today, price_yesterday, change_rel, change_abs, product_name, imageURL, store):
-    logo_image = Image.open("crawler\\storelogos\\kaufland.png")
-    logo_image = logo_image.convert("RGB")
     insert_logo(background_image, store, 720)
 
     # PRODUCT IMAGE
@@ -113,7 +118,15 @@ def save_image():
     background_image.save(path_to_save)
 
 
-background_image = Image.open("crawler\\template.png")
+cwd = os.getcwd()
+if "home" in cwd:
+    path_to_template = "/home/SebastianChristoph/mysite/static/crawler/template.png"
+else:
+    path_to_template = "crawler\\template.png"
+
+
+
+background_image = Image.open(path_to_template)
 background_image = background_image.convert("RGB")
 
 #GET INFO.JSON
