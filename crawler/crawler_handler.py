@@ -24,7 +24,9 @@ class CrawlerHandler:
             "drogerie" : mapper.mapping_drogerie,
             "baumarkt" : mapper.mapping_baumarkt,
             "biocompany" : mapper.mapping_biocompany,
-            "rewe" : mapper.mapping_rewe
+            "rewe" : mapper.mapping_rewe,
+            "ikea" : mapper.mapping_ikea,
+            "superstore" : mapper.mapping_superstore
         }
         self.not_cleaned_prices = 0
 
@@ -113,6 +115,7 @@ class CrawlerHandler:
                     self.added_ids += 1
 
             print("Done")
+            print("   Already", len(self.STORE_JSON_CURRENT_IDS), "IDs in json")
 
             # HANDLE PRODUCT NAMES
         else:
@@ -121,13 +124,15 @@ class CrawlerHandler:
                 self.STORE_JSON_CURRENT_PRODUCTS.append(product["name"])
             print("Done")
 
-
     def is_product_already_in_json(self, product):
         return product in self.STORE_JSON_CURRENT_PRODUCTS
 
     def is_product_id_already_in_json(self, product_id):
         return product_id in self.STORE_JSON_CURRENT_IDS
 
+    def is_product_already_in_dict(self, product):
+        return product in self.STORE_JSON["products"]
+    
     def save_data(self):
         self.print_message("Save data to " + self.store.upper() + ".json ...")
         if self.store == "Testing":
@@ -244,10 +249,20 @@ class CrawlerHandler:
                         self.updated += 1
                         break
             else:
+
+                #z.B. Kaufland, IKEA
+                if found_product.get("category") != None:
+                    cat = found_product["category"]
+                
+                #z.B. Rewe, hat noch keine ID
+                else:
+                    cat = self.mapping[product_to_find]
+
+
                 new_product = {
                     "id" : found_product["id"],
                     "name": found_product["name"],
-                    "category" : self.mapping[product_to_find],
+                    "category" : cat,
                     "image" : found_product["imageURL"],
                     "dates" : {
                         self.current_date :  found_product["price"]
@@ -256,9 +271,10 @@ class CrawlerHandler:
                     "original_link" : found_product["original_link"]
                 }
 
-                self.STORE_JSON["products"].append(new_product)
-                self.new += 1
-
+                if not self.is_product_already_in_dict(new_product):
+                    self.STORE_JSON["products"].append(new_product)
+                    self.new += 1
+           
 
     def give_infos(self):
         self.t1 = time.time()
