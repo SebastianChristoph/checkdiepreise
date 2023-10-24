@@ -64,8 +64,7 @@ mapping_superstore = {
     "schmerzmittel": "Gesundheit",
     "nahrungsergänzungsmittel": "Gesundheit",
     "medizinprodukte": "Gesundheit",
-
-        "apfel" : "Obst",
+    "apfel" : "Obst",
     "äpfel" : "Obst",
     "banane" : "Obst",
     "birne" : "Obst",
@@ -164,6 +163,28 @@ mapping_superstore = {
     "schnaps" : "Getränke",
     "likör" : "Getränke",
     "weinbr" : "Getränke"
+}
+
+mapping_dm = {
+    "baby": "Baby",
+    "müsli": "Food",
+    "makeup": "MakeUp",
+    "parfum" : "Parfum",
+    "MAC Cosmetics" : "makeup",
+    "Maybelline" : "makeup",
+    "oreal" : "makeup",
+    "Urban Decay" : "makeup",
+    "tee" : "Getränke",
+    "mandelmus" : "Getränke",
+    "haushalt" : "Haushalt",
+    "creme" : "Creme",
+    "müsli" : "Food",
+    "nudel" : "food",
+    "badesalz" : "badesalz",
+    "shampoo" : "Haare",
+    "balsam" : "Gesundheit",
+    "schwanger" : "Gesundheit",
+    "mutter" : "Gesundheit"
 }
 
 mapping_baumarkt = {
@@ -589,23 +610,41 @@ mapping_ikea = {
     "API" : "API"
 }
 
+mapping_aldisued = {
+    "ALDISUED" : "ALDISUED",
+    "API" : "API"
+}
+
+
+mapping_mueller_api= {
+    "Mueller" : "Mueller",
+    "API" : "API"
+}
+
+
+mapping_fressnapf_api= {
+    "Fressnapf" : "Fressnapf",
+    "API" : "API"
+}
+mapping_babywalz_api= {
+    "BabyWalz" : "BabyWalz",
+    "API" : "API"
+}
+
 mapping_kaufland_api ={
     "tiernahrung": "Tiere",
     "tier" : "Tiere",
     "parfum": "Parfum",
     "makeup": "Makeup",
     "baby": "Baby",
-    "windel": "Baby",
     "lebensmittel": "Lebensmittel und Ernährung",
     "hygiene": "Hygiene",
     "toilettenpapier": "Hygiene",
-    "fotokameras": "Foto",
+    "fotokamera": "Elektronik",
     "gesundheit": "Gesundheit",
     "vitamine": "Gesundheit",
     "obst" : "Obst",
     "apfel" : "Obst",
-    "banane" : "Obst",
-    "birne" : "Obst",
     "gemüse" : "Gemüse",
     "quark" : "Molkerei",
     "milch" : "Molkerei",
@@ -628,13 +667,11 @@ mapping_kaufland_api ={
     "pflanze" : "Pflanzen",
     "blume" : "Pflanzen",
     "orchide" : "Pflanzen",
-    "kaktus": "Pflanzen",
     "cola" : "Getränke",
     "saft" : "Getränke",
     "limonade" : "Getränke",
     "tee" : "Getränke",
     "shake" : "Getränke",
-    "schorle" : "Getränke",
     "energy" : "Getränke",
     "getränk" : "Getränke",
     "bier" : "Getränke",
@@ -646,3 +683,6 @@ mapping_kaufland_api ={
     "Tablet" : "Elektronik",
 }
 
+dummy_store_type= {
+    "dummy" : "Dummy"
+}

@@ -11,7 +11,11 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
     source = requests.get(URL + poduct_to_search, headers = headers).text
     soup = BeautifulSoup(source, "lxml")
 
+
     list_products = soup.find_all("div", class_="card product-box box-standard")
+
+    with open("example_response_globus.html", "w", encoding="UTF-8") as file:
+        file.write(list_products[0].prettify())
 
     if show_product_to_search:
         if(len(list_products) == 0):
@@ -32,7 +36,8 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
 
     for product in list_products:
         try:
-           
+
+        
             # IMAGE URL
             try:
                 image_wrapper = product.find("div", class_= "product-image-wrapper")
@@ -41,14 +46,18 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
             except:
                 imageURL = ""
 
-            # # STORE LINK
+
+            # ORIGINAL LINK and ID
             try: 
                 image_wrapper = product.find("div", class_= "product-image-wrapper")
                 linkwrapper = image_wrapper.find("a")
                 original_link = "https://www.globus-baumarkt.de" + linkwrapper.get("href").strip()
+
+                id= original_link.split("-")[-1].replace("/", "")
             except:
                 original_link = ""
-
+                continue
+            
             # TITLE
             try:
                 title_link = product.find("a", class_="product-image-link")
@@ -61,18 +70,68 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
         
             # PRICE
             try:
-                priceWrapper = product.find("div", class_ = "product-price")
-                price = priceWrapper.text.strip()
-                if "%" in price:
-                    spans = priceWrapper.find_all("span")
-                    price = spans[-1].text
-                       
+                found_price_unit = False
+
+                try:
+                    price_unit = product.find("span", class_ ="unit")
+                    price = price_unit.text.strip()
+                    price_spit = price.split("/")
+                    price = price_spit[0].strip()
+                    unit = price_spit[1].strip()
+                    found_price_unit = True
+                    # print("1", price, unit)
+                    if (price == ""):
+                        # print("skipped")
+                        found_price_unit = False
+                except:
+                    found_price_unit = False
+
+                if found_price_unit == False:
+                    try:
+                        unit_price = product.find("span", class_ = "product-unit-price")
+                        price = unit_price.text.strip()
+                        price_spit = price.split("/")
+                        price = price_spit[0].strip()
+                        unit = price_spit[1].strip()
+                        found_price_unit = True
+                        #print("2", price, unit)
+                        if (price == ""):
+                            # print("skipped")
+                            found_price_unit = False
+                        
+                    except:
+                        found_price_unit = False
+                
+                if found_price_unit == False:
+                    try:
+                        price_wrapper = product.find("div", class_ = "product-price")
+                        price = price_wrapper.text.strip()
+                        unit = "Stk/L/kg"
+                        if "%" in price:
+                            spans = price_wrapper.find_all("span")
+                            price = spans[-1].text
+                        
+                        #print("3", price, unit)
+                      
+                    except:
+                        print("no price possible")
+                        continue
+
+        
                 if "{" in price:
                     continue
+            
+                # print("**************************")
+                # print(price, unit)
+                
+               
             except Exception as e:
+                print("ERROR", e)
                 continue
 
             product_dict = {
+                "id" : id, 
+                "unit": unit,
                 "imageURL" : imageURL,
                 "name" : title,
                 "price" : price,
@@ -85,3 +144,6 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
             continue
 
     return list_of_found_products
+
+
+

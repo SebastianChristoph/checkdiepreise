@@ -41,8 +41,6 @@ def get_ikea_sub_categories(url):
 
     return sub_cat_list
 
-
-
 def add_products_from_category_page(url, page_iteration_limit = 10):
     global URLS_COLLECTION
     page = 8
@@ -107,6 +105,7 @@ def get_product_info(url):
         source = s.get(url, headers = headers).text
         soup = BeautifulSoup(source, "lxml")
 
+
         utag_data_script = soup.find('script', {'data-type': 'utag-data'})
         javascript_code = utag_data_script.string
         start = javascript_code.find('var utag_data = ') + len('var utag_data = ')
@@ -131,6 +130,8 @@ def get_product_info(url):
         # price
         price = utag_data["price"][0]
 
+        unit = "Artikel"
+
         # CATEGORY
         category_wrapper = soup.find("div", class_ = "bc-breadcrumb")
         category_list = category_wrapper.find_all("li", class_="bc-breadcrumb__list-item")
@@ -138,6 +139,7 @@ def get_product_info(url):
 
         new_dict = {
             "id" : id,
+            "unit" : unit,
             "price" : price, 
             "category" : category,
             "imageURL" : imageURL,
@@ -187,7 +189,7 @@ def get_products_from_shop():
     print(len(URLS_COLLECTION))
 
     for i in range(0, len(URLS_COLLECTION)):
-        print(i, "/", len(URLS_COLLECTION))
+        print("Getting information for product", i, "of", len(URLS_COLLECTION))
         get_product_info(URLS_COLLECTION[i])
     
     return found_products

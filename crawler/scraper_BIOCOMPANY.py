@@ -16,6 +16,8 @@ def getting_articles_from_shop(show_product_to_search = False):
     soup = BeautifulSoup(source, "lxml")
     list_products = soup.find_all("div", class_="dealscard")
 
+    print(list_products[0])
+
     s2 = requests.Session()
     s2.headers = headers
     source = s2.get(URL_Dresden, headers = headers).text
@@ -94,3 +96,5 @@ def getting_articles_from_shop(show_product_to_search = False):
         list_of_found_products.append(product_dict)
 
     return list_of_found_products
+
+getting_articles_from_shop(True)

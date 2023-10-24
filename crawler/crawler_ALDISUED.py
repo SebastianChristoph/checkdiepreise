@@ -1,13 +1,13 @@
 import crawler_handler
-import scraper.scraper_IKEA as scraper_IKEA
+import scraper.scraper_ALDI_SUED as scraper_ALDI_SUED
 
 SHOW_PRINTS = False
 
-Crawler_Handler = crawler_handler.CrawlerHandler("IKEA", "ikea", with_id = True)
+Crawler_Handler = crawler_handler.CrawlerHandler("ALDISUED", "aldisued", with_id = True)
 
 print("Start Scraping")
 
-found_products = scraper_IKEA.get_products_from_shop()
+found_products = scraper_ALDI_SUED.get_products_from_shop()
 Crawler_Handler.handle_with_id(found_products, "API")
 
 print("Done")

@@ -1,5 +1,5 @@
 import crawler_handler
-import scraper_REWE
+import scraper.scraper_REWE as scraper_REWE
 
 SHOW_PRINTS = False
 

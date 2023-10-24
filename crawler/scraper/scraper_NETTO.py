@@ -12,6 +12,11 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
      soup = BeautifulSoup(source, "lxml")
      list_products = soup.find_all("li", class_="product-list__item")
 
+     # with open("example_response_netto.html", "w", encoding="UTF-8") as file:
+     #      file.write(list_products[0].prettify())
+     
+ 
+
      if show_product_to_search:
           if(len(list_products) == 0):
                print(">> FOUND NO PRODUCTS!")
@@ -39,26 +44,35 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
                except:
                     continue
 
-               # PRICE
-               # found_base_price = False
-               # try:
-               #      price= product.find("span", class_="product-property__base-price").text.strip()
-               #      found_base_price = True
-               # except:
-               #      found_base_price  = False
+              
 
-               # if found_base_price == False:
-               
+               #PRICE
+
+               found_base_price = False
                try:
-                    price= product.find("span", class_="product__current-price--digits-before-comma").text.strip()
+                    price= product.find("span", class_="product-property__base-price").text.strip()
+                    price_split = price.split("/")
+                    price = price_split[0]
+                    unit = price_split[1].upper()
+                    found_base_price = True
                except:
-                    continue
+                    found_base_price  = False
+
+               if found_base_price == False:
                
-               # SHOP LINK
+                    try:
+                         price= product.find("span", class_="product__current-price--digits-before-comma").text.strip()
+                         unit = "Stk"
+                    except:
+                         continue
+               
+               # SHOP LINK and ID
                try:
                     original_link = product.find("a", class_ = "product").get("href")
+                    id = original_link.split("-")[-1]
+              
                except:
-                    original_link = ""
+                    continue
                
                # IMAGE URL
                try:
@@ -73,6 +87,8 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
 
           product_dict = {
                "imageURL" : imageURL,
+               "id" : id,
+               "unit" : unit,
                "name" : title,
                "price" : price,
                "original_link" : original_link
@@ -81,3 +97,5 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
           list_of_found_products.append(product_dict)
 
      return list_of_found_products
+
+

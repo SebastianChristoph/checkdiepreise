@@ -15,6 +15,10 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
     soup = BeautifulSoup(source, "lxml")
     list_products = soup.find_all("div", class_="rm-grid__content")
 
+    with open("exmaple_response_rossmann.html", "w", encoding="UTF-8") as file:
+        file.write(list_products[8].prettify())
+    # return
+
     if show_product_to_search:
         if(len(list_products) == 0):
             print(">> FOUND NO PRODUCTS!")
@@ -98,4 +102,7 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
 
         list_of_found_products.append(product_dict)
 
+    print(list_of_found_products[0])
     return list_of_found_products
+
+getting_articles_from_shop("parfum", True)

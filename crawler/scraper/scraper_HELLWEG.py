@@ -13,6 +13,10 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
 
     list_products = soup.find_all("div", class_="product-box")
 
+    # with open("example_response_hellweg.html", "w", encoding="UTF-8") as file:
+    #     file.write(list_products[3].prettify())
+    
+
     if show_product_to_search:
         if(len(list_products) == 0):
             print(">> FOUND NO PRODUCTS!")
@@ -33,6 +37,15 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
     for product in list_products:
         try:
 
+            #id
+            try:
+                product_wrapper = product.find("div", class_ = "product-image-wrapper")
+                product_link = product_wrapper.find("a", class_ = "product-image-link")
+                id = product_link.get("data-product-id")
+            except:
+                print("no id found")
+                continue
+
             # IMAGE URL
             try:
                 image_source = product.find("img")
@@ -50,17 +63,40 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
             # TITLE
             try:
                 title_link = product.find("a", class_="product-image-link")
-                title = title_link.get("title").strip()
+                brand = product.find("div", class_ ="manufacturer-name").text.strip()
+                title = brand + " - " + title_link.get("title").strip()
+
             except:
                 continue
         
             # PRICE
             try:
-                price = product.find("div", class_ = "price-wrapper").text.strip()
+                unit = "Stk."
+                found_base_price = False
+                try:
+                    base_price_wrapper = product.find("span", class_= "price-unit-reference")
+                    price = base_price_wrapper.text.strip()
+                    price_split = price.split("/")
+                    price = price_split[0]
+                    unit = price_split[1]
+
+                except:
+                    found_base_price = False
+                
+                if found_base_price == False:
+                    try:
+                        price = product.find("div", class_ = "price-wrapper").text.strip()
+                        unit = "Stk."
+                    except:
+                        print("no price found")
+                        continue
             except:
+                print("error")
                 continue
 
             product_dict = {
+                "id" : id,
+                "unit" : unit,
                 "imageURL" : imageURL,
                 "name" : title,
                 "price" : price,
@@ -72,3 +108,4 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
             continue
 
     return list_of_found_products
+
