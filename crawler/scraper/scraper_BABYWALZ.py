@@ -26,6 +26,7 @@ def get_categories():
 def collect(url, categoryname):
     global current, categories, list_found_products, used_ids
     print("Get products for category:", categoryname, "[", current, "of", len(categories), "]")
+    print(url)
     try:
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "lxml")
@@ -42,10 +43,16 @@ def collect(url, categoryname):
             print("... page", page, "of", last_page)
 
         try:
-            url = f"https://www.baby-walz.de/kinderwagen/?pageNumber={page}"
-            response = requests.get(url)
+            url_page = f"{url}?pageNumber={page}"
+            print("...", url_page)
+            response = requests.get(url_page)
             soup = BeautifulSoup(response.text, "lxml")
             list_products = soup.find_all("div", class_ ="bw-category-column")
+
+            # with open("babywalzex.html", "w", encoding="UTF-8") as file:
+            #     file.write(soup.prettify())
+            #     print("Done")
+            #     return
 
             for product_wrapper in list_products:
                 try:
