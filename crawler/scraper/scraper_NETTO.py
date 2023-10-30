@@ -3,20 +3,22 @@ import requests
 URL = "https://www.netto-online.de/INTERSHOP/web/WFS/Plus-NettoDE-Site/de_DE/-/EUR/ViewMMPParametricSearch-Browse?SearchScope=product&SearchTerm="
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
 
-def getting_articles_from_shop(poduct_to_search, show_product_to_search = False): 
+def getting_articles_from_shop(product_to_search, show_product_to_search = False): 
      list_products = []
      list_of_found_products = []
+
+     url = f"https://www.netto-online.de/INTERSHOP/web/WFS/Plus-NettoDE-Site/de_DE/-/EUR/ViewMMPParametricSearch-SimpleOfferSearch?SearchTerm=gurke&Region=1&MeatMarketType=2&KW=43"
      s = requests.Session()
      s.headers = headers
-     source = s.get(URL+poduct_to_search, headers = headers).text
+     source = s.get(url, headers = headers).text
+     print(source)
      soup = BeautifulSoup(source, "lxml")
      list_products = soup.find_all("li", class_="product-list__item")
 
-     # with open("example_response_netto.html", "w", encoding="UTF-8") as file:
-     #      file.write(list_products[0].prettify())
+     with open("soup_netto.html", "w", encoding="UTF-8") as file:
+          file.write(soup.prettify())
+     return
      
- 
-
      if show_product_to_search:
           if(len(list_products) == 0):
                print(">> FOUND NO PRODUCTS!")
@@ -99,3 +101,4 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
      return list_of_found_products
 
 
+getting_articles_from_shop("gurke", True)

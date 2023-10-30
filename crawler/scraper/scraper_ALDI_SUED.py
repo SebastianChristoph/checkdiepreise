@@ -53,7 +53,6 @@ def get_categories_produktsortiment():
             except:
                 continue
     
-
 def get_categories_eigenmarken():
     print("Get Eigenmarken")
     global categories
@@ -82,7 +81,6 @@ def get_category_links():
     get_categories_eigenmarken()
     get_categories_produktsortiment()
     
-
 def clean_baseprice(input_string):
 
     match = re.search(r'\((.*?)\)', input_string)
@@ -97,6 +95,11 @@ def getting_articles_from_shop(category, cat_url, cat_main_name, show_product_to
     global list_of_found_products 
     source = requests.get(URL, headers = headers).text
     soup = BeautifulSoup(source, "lxml")
+
+    # with open("ALDI.html", "w", encoding="UTF-8") as file:
+    #     file.write(soup.prettify())
+    # print("done")
+    # return
     #category = soup.find("h1", class_ = "plp_title").text.strip()
 
     # max products
@@ -136,7 +139,7 @@ def getting_articles_from_shop(category, cat_url, cat_main_name, show_product_to
 
 
                 ##price 
-                price = product.find("span", class_ = "price").text.strip()
+                price = product.find("span", class_ = "price").text.replace("€", "").strip()
                 unit = "Stk"
 
                 baseprice = product.find("span", class_ ="additional-product-info").text.strip()
@@ -147,10 +150,11 @@ def getting_articles_from_shop(category, cat_url, cat_main_name, show_product_to
                     if "=" in baseprice:
                         baseprice_split = baseprice.split("=")
                         unit = baseprice_split[0].replace("(","")
-                        price = baseprice_split[1].replace(")", "")
+                        baseprice = baseprice_split[1].replace(")", "").replace("€", "").strip()
                     else:
                         unit = baseprice
                         unit = clean_baseprice(unit)
+                        baseprice = price
                 
                 if "1 je" in unit:
                     unit = "Stk"
@@ -178,11 +182,13 @@ def getting_articles_from_shop(category, cat_url, cat_main_name, show_product_to
                     "id" : id,
                     "name" : title,
                     "price": price,
+                    "baseprice" : baseprice,
                     "unit" : unit,
                     "imageURL" : imageURL,
                     "original_link" : original_link,
                     "category" : cat_main_name
                 }
+
             
                 if product_dict not in list_of_found_products:
                     list_of_found_products.append(product_dict)
@@ -204,3 +210,4 @@ def get_products_from_shop():
     
     return list_of_found_products
 
+get_products_from_shop()

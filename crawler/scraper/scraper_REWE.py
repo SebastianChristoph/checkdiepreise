@@ -2,15 +2,9 @@ import subprocess
 import json
 import re
 
-from bs4 import BeautifulSoup
-import requests
-
-
 list_of_found_products =  []
 
-
 def fetch_rewe_data():
-
 
     pageId = 1
     items = []
@@ -44,10 +38,9 @@ def create_product_url(name, product_id):
 
     return product_url
 
-
-
 def getting_articles_from_shop():
     global list_of_found_products
+
     pageId = 1
     curl_command = f'curl -s "https://mobile-api.rewe.de/api/v3/product-search?searchTerm=*&page={pageId}&sorting=RELEVANCE_DESC&objectsPerPage=250&marketCode=440405&serviceTypes=PICKUP" -H "Rd-Service-Types: PICKUP" -H "Rd-Market-Id: 440405"'
     result = subprocess.run(curl_command, shell=True, capture_output=True, text=True)
@@ -69,19 +62,22 @@ def getting_articles_from_shop():
                 try:
 
                     #price and uit
+                    price = product["currentPrice"].strip()
+
                     if product.get("grammage") != None:
                         unit = product["grammage"].strip()
 
                         if "=" in unit:
                             split_unit = unit.split("=")
-                            price = split_unit[1].replace(")", "")
+                            baseprice = split_unit[1].replace(")", "")
                             unit = split_unit[0]
                             index_of_klammer = unit.index("(")
                             unit = unit[index_of_klammer+1:-1].strip()
                         else: 
-                            price = product["currentPrice"].strip()
+                            baseprice = price
                     else:
                         price = product["currentPrice"].strip()
+                        baseprice = price
                         unit = "Stk"
                     
 
@@ -94,6 +90,7 @@ def getting_articles_from_shop():
                         "imageURL" : product["imageUrl"],
                         "name" : product["name"],
                         "price" : price,
+                        "baseprice" : baseprice,
                         "original_link" : original_link
                     }
 

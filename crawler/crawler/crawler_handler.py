@@ -61,20 +61,20 @@ class CrawlerHandler:
             #flask path
             if self.show_prints:
                 print("RUNNING IN FLASK")
-            self.path_to_store_json = "/home/SebastianChristoph/mysite/static/crawler/jsons/" + self.store.upper() + ".json"
+            self.path_to_store_json = "/home/SebastianChristoph/mysite/static/crawler/jsons/" + self.store + ".json"
             self.path_to_log = "/home/SebastianChristoph/mysite/static/crawler/logging/dailylog.txt"
         else:
             # local path
             if self.show_prints:
                 print("RUNNING LOCALLY")
-            self.path_to_store_json = "crawler/jsons/" + self.store.upper() + ".json"
+            self.path_to_store_json = "crawler/jsons/" + self.store + ".json"
             self.path_to_log = "crawler/logging/dailylog.txt"
 
         #method calls
         self.current_date = self.get_current_date()
         self.getting_store_json()
-        self.add_current_date_to_json()
-        self.clear_webshop_links_for_all_products()
+        #self.add_current_date_to_json()
+        #self.clear_webshop_links_for_all_products()
         self.get_all_products_form_JSON()
 
     def print_message(self, message):
@@ -86,7 +86,7 @@ class CrawlerHandler:
             print(message + dots, end = "")
 
     def getting_store_json(self):
-        self.print_message("Getting Store JSON for " + self.store.upper())
+        self.print_message("Getting Store JSON for " + self.store)
         with open(self.path_to_store_json, encoding="utf-8") as json_file:
             self.STORE_JSON = json.load(json_file)
         if self.show_prints:
@@ -170,7 +170,7 @@ class CrawlerHandler:
         return file_size_in_mb
 
     def save_data(self):
-        self.print_message("Save data to " + self.store.upper() + ".json ...")
+        self.print_message("Save data to " + self.store + ".json ...")
         if self.store == "Testing":
             with open("testingoutput.json", 'w', encoding="utf-8") as textfile:
                 json.dump(self.STORE_JSON, textfile)
@@ -237,15 +237,15 @@ class CrawlerHandler:
     def clean_unit_text(self,unittext):
         return unittext.upper()
 
-
     def clean_data(self):
         if self.show_prints:
             self.print_message("Cleaning up")
 
         for product in self.STORE_JSON["products"]:
-            self.handle_historical_labels(product)
-            for date in product["dates"]:
-                product["dates"][date]= self.clean_price_text(product["dates"][date])
+            # self.handle_historical_labels(product)
+            for price_change in product["price_changes"]:
+                price_change["price_single"]= self.clean_price_text( price_change["price_single"])
+                price_change["price_bulk"]= self.clean_price_text( price_change["price_bulk"])
                 product["unit"] = self.clean_unit_text(product["unit"])
                 product["name"] = self.clean_name(product["name"])
 
@@ -295,25 +295,57 @@ class CrawlerHandler:
 
             if(self.is_product_id_already_in_json(found_product["id"])):
                 # ID already in JSON ; find ID in JSON
-                for entry in self.STORE_JSON["products"]:
-                    if entry["id"] == found_product["id"]:
-                        entry["dates"][self.current_date] = found_product["price"]
-                        entry["original_link"] = found_product["original_link"]
-                        entry["category"] = cat
-                        self.updated += 1
-                        self.NEW_ADDED_IDS.append(entry["id"])
-                        break
+                for product_in_json in self.STORE_JSON["products"]:
+                    if product_in_json["id"] == found_product["id"]:
+
+                        # update image
+
+                        product_in_json["imageURL"] = found_product["imageURL"]
+                        
+                        #HAT BEREITS eINTRAG VON HEUTE?
+
+                        if product_in_json["price_changes"][-1]["date"] == self.get_current_date():
+                            continue
+                        
+                        # get last price-change
+                        last_price_bulk = product_in_json["price_changes"][-1]["price_bulk"]
+
+                        # new price change
+                        if self.clean_price_text(found_product["baseprice"]) != last_price_bulk:
+                            print(found_product["baseprice"], last_price_bulk)
+
+                            new_price_change = {
+                                "date" : self.get_current_date(),
+                                "price_single" : self.clean_price_text(found_product["price"]),
+                                "price_bulk" : self.clean_price_text(found_product["baseprice"])
+                            }
+
+                            product_in_json["price_changes"].append(new_price_change)
+
+                            self.updated += 1
+                            self.NEW_ADDED_IDS.append(product_in_json["id"])
+                            break
+
+                        # entry["dates"][self.current_date] = found_product["price"]
+                        # entry["original_link"] = found_product["original_link"]
+                        # entry["category"] = cat
+                        # self.updated += 1
+                        # self.NEW_ADDED_IDS.append(entry["id"])
+                        # break
             else:
                 new_product = {
                     "id" : found_product["id"],
                     "name": name,
                     "category" : cat,
                     "unit" : found_product["unit"],
-                    "image" : found_product["imageURL"],
-                    "dates" : {
-                        self.current_date :  found_product["price"]
-                            },
-                    "found_by_keyword" : product_to_find,
+                    "imageURL" : found_product["imageURL"],
+                    "price_changes" : [
+                            { 
+                                "date" :  self.get_current_date(),
+                                "price_single" : found_product["price"],
+                                "price_bulk" : found_product["baseprice"]
+                            }
+                        ],
                     "original_link" : found_product["original_link"]
                 }
  
@@ -329,10 +361,8 @@ class CrawlerHandler:
         if self.show_prints:
             self.print_message("Saving log")
         filesize = self.get_file_size(self.path_to_store_json)
-       
-
+    
         current_time = self.get_current_time()
-
 
         with open(self.path_to_log, "a", encoding="UTF-8") as file:
             file.write("\n-----------------------------------------------------")

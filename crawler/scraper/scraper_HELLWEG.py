@@ -70,26 +70,28 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
                 continue
         
             # PRICE
+
             try:
-                unit = "Stk."
-                found_base_price = False
+                price = product.find("div", class_ = "price-wrapper").text.strip()
+                
+            except:
+                print("no price found")
+                continue
+
+
+            # BASEPRICE
+            try:
                 try:
                     base_price_wrapper = product.find("span", class_= "price-unit-reference")
-                    price = base_price_wrapper.text.strip()
-                    price_split = price.split("/")
-                    price = price_split[0]
-                    unit = price_split[1]
+                    base_price_wrapper = base_price_wrapper.text.strip()
+                    base_price_wrapper_split = base_price_wrapper.split("/")
+                    baseprice = base_price_wrapper_split[0]
+                    unit = base_price_wrapper_split[1]
 
                 except:
-                    found_base_price = False
-                
-                if found_base_price == False:
-                    try:
-                        price = product.find("div", class_ = "price-wrapper").text.strip()
-                        unit = "Stk."
-                    except:
-                        print("no price found")
-                        continue
+                    baseprice = price
+                    unit = "Stk"
+              
             except:
                 print("error")
                 continue
@@ -100,6 +102,7 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
                 "imageURL" : imageURL,
                 "name" : title,
                 "price" : price,
+                "baseprice": baseprice,
                 "original_link" : original_link
             }
 

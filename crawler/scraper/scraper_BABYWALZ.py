@@ -49,7 +49,7 @@ def collect(url, categoryname):
             soup = BeautifulSoup(response.text, "lxml")
             list_products = soup.find_all("div", class_ ="bw-category-column")
 
-            # with open("babywalzex.html", "w", encoding="UTF-8") as file:
+            # with open("example_response_babywalz.html", "w", encoding="UTF-8") as file:
             #     file.write(soup.prettify())
             #     print("Done")
             #     return
@@ -73,8 +73,13 @@ def collect(url, categoryname):
 
                     # imageURL
 
-                    imageURL_wrapper = product_wrapper.find("img")
-                    imageURL = imageURL_wrapper.get("src")[2:]
+                    imageURL = ""
+                    try:
+                        imageURL_wrapper = product_wrapper.find("img")
+                        imageURL = "https:" + imageURL_wrapper.get("data-original")
+                    except:    
+                        imageURL_wrapper = product_wrapper.find("img")
+                        imageURL = "https:" + imageURL_wrapper.get("src")
 
                     # print(imageURL)
 
@@ -91,6 +96,27 @@ def collect(url, categoryname):
 
                     except:
                         price =  product_wrapper.find("div", class_ = "bw-product__price").text.strip()
+                    
+
+                    #baseprice
+
+                    unit = "Stk."
+                    try:
+                        baseprice = product_wrapper.find("div", class_ = "bw-product__price-base").text.strip()
+
+                        if "=" in baseprice:
+                            #1 Meter = 6,50 €
+                            #1 Kilogramm = 22,71 €
+                            #1 Liter = 5,99 €
+                            baseprice_split = baseprice.split("=")
+                            baseprice = baseprice_split[-1].replace("€", "").strip()
+                            unit = baseprice_split[0].strip()
+                        else:
+                            baseprice = price
+                    except:
+                        baseprice = price
+
+
                     # print(price)
                     # print("******************")
 
@@ -100,8 +126,9 @@ def collect(url, categoryname):
                                 "category" : categoryname,
                                 "original_link" : original_link,
                                 "id" : id,
-                                "unit" : "Stk",
-                                "price" : price
+                                "unit" : unit,
+                                "price" : price,
+                                "baseprice" : baseprice
                             }
 
                     if id not in used_ids:

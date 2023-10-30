@@ -1,12 +1,6 @@
 import requests
 import json
 
-
-# url_search = "https://api.os.fressnapf.com//rest/v2/fressnapfDE/products/search?fields=FULL&query=katzenstreu::&sort=relevance&lang=de&pageSize=100"
-# url2 = "https://api.os.fressnapf.com//rest/v2/fressnapfDE/products/search?fields=DEFAULT&query=trockenfutter&sort=relevance&currentPage=0&pageSize=5&lang=de"
-# response = requests.get(url2)
-# response_dict = json.loads(response.text)
-# print(len(response_dict["products"]))
 categories = {}
 current = 0
 list_found_products = []
@@ -14,7 +8,6 @@ def fix_encoding_error(input_string):
     # Ersetze das nicht brechbare Leerzeichen (U+00A0) durch ein normales Leerzeichen
     corrected_string = input_string.replace('\xa0', ' ')
     return corrected_string
-
 
 def collect():
     global list_found_products, current
@@ -34,6 +27,10 @@ def collect():
                     collecting = False
                     break
 
+                # with open("example_response_fressnapf.json", "w", encoding="UTF-8") as file:
+                #     json.dump(response_dict, file)
+                # return
+            
                 for product in response_dict["products"]:
 
                     # name
@@ -41,18 +38,20 @@ def collect():
 
                     #id
                     id = product["code"]
-                    #price
 
+                    #price
+                    price = product["pricing"]["current"]["value"]
+
+                    #baseprice
                     if product["pricing"].get("perUnit") != None:
-                        price = product["pricing"]["perUnit"]["value"]
+                        baseprice = product["pricing"]["perUnit"]["value"]
                         unit = product["pricing"]["perUnit"]["formattedValue"].replace('\xa0', ' ')
                         if "/" in unit:
                             unit = unit.split("/")[-1]
                     else:
-                        price = product["pricing"]["current"]["value"]
+                        baseprice = price
                         unit = "Stk"
-                
-
+            
                     # imageURL
                     imageURL = product["images"][0]["url"]
 
@@ -66,13 +65,13 @@ def collect():
                         "original_link" : original_link,
                         "id" : id, 
                         "unit" : unit,
-                        "price" : price
-
+                        "price" : price,
+                        "baseprice" : baseprice
                     }
 
                     if new_product not in list_found_products:
                         list_found_products.append(new_product)
-                print(len(list_found_products))
+                #print(len(list_found_products))
                 page +=1
                 
             except Exception as e:
@@ -82,7 +81,6 @@ def collect():
         current += 1
     print(len(list_found_products))
   
-
 def get_categories():
     global categories
     fressnap_categories = {
@@ -100,7 +98,7 @@ def get_categories():
 
         "Garten-Teich" : "https://api.os.fressnapf.com//rest/v2/fressnapfDE/cms/wordpress/pages?fields=DEFAULT&url=%2Fc/garten-teich/&lang=de",
 
-        
+        "Tiergesundheit" : "https://api.os.fressnapf.com//rest/v2/fressnapfDE/cms/wordpress/pages?fields=DEFAULT&url=%2Fc/vet-diaeten/&lang=de"
     }
 
     #"Tiergesundheit" : "https://api.os.fressnapf.com//rest/v2/fressnapfDE/cms/wordpress/pages?fields=DEFAULT&url=%2Fc/vet-diaeten/&lang=de"
@@ -113,18 +111,45 @@ def get_categories():
         response_dict = json.loads(response.text)
         content = json.loads(response_dict["content"])
 
-        for cat in content["content_slots"]["a"]["sections"][0]["grid"]["items"][0]["components"][0]["data"]["slides"]:
-            subcategory = category + " " + cat["link"]["title"]
-            subcategory_url = cat["link"]["url"]
-            categories[subcategory] = {"url" : subcategory_url, "main_category" : "Hund"}
+        if category == "Tiergesundheit":
+            for cat in content["content_slots"]["a"]["sections"]:
+                try:
+                    for test in cat["grid"]["items"][0]["components"][0]["data"]["items"]:
+                       
+                        if "hund" in test["link"]["url"]:
+                            main_cat = "Hund"
+                        else:
+                            main_cat = "Katze"
+                    
+                        subcategory = category + " " + main_cat + " " + test["title"]
+                        subcategory_url = test["link"]["url"]
+                        categories[subcategory] = {"url" : subcategory_url, "main_category" : category}
+
+                    for test in cat["grid"]["items"][1]["components"][0]["data"]["items"]:
+                        if "hund" in test["link"]["url"]:
+                            main_cat = "Hund"
+                        else:
+                            main_cat = "Katze"
     
+                        subcategory = category + " " + main_cat + " " + test["title"]
+                        subcategory_url = test["link"]["url"]
+                        categories[subcategory] = {"url" : subcategory_url, "main_category" : category}
+        
+                except:
+                    continue       
+        else:
+
+            for cat in content["content_slots"]["a"]["sections"][0]["grid"]["items"][0]["components"][0]["data"]["slides"]:
+                subcategory = category + " " + cat["link"]["title"]
+                subcategory_url = cat["link"]["url"]
+                categories[subcategory] = {"url" : subcategory_url, "main_category" : category}
  
 def get_products_from_shop():
     get_categories()
     collect()
+
     return list_found_products
 
 # with open("fressnapf.json", "w", encoding="UTF-8") as file:
 #     json.dump(content, file)
 # print("Done")
-

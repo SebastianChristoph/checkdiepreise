@@ -21,11 +21,17 @@ def getting_articles_from_shop(searchterm, page):
             for product in response_dict["products"]:
 
                 try:
+
+                    #price
+
+                    price = product["priceLocalized"].replace("€", "").strip()
+
+
                     # base price
                     if product.get("basePrice") != None:
-                        price = product["basePrice"]["formattedValue"]
+                        baseprice = product["basePrice"]["formattedValue"]
                     else:
-                        price = product["priceLocalized"]
+                        baseprice = product["priceLocalized"]
 
                     # unit
                     if product.get("basePriceUnit") != None:
@@ -58,6 +64,7 @@ def getting_articles_from_shop(searchterm, page):
                 new_dictionary = {
                     "name" : product["brandName"] + " - " + product["title"],
                     "price" : price,
+                    "baseprice": baseprice,
                     "unit" : unit,
                     "category" : category,
                     "original_link" : "https://www.dm.de" + product["relativeProductUrl"],

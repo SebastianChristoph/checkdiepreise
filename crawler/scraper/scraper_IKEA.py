@@ -129,6 +129,7 @@ def get_product_info(url):
 
         # price
         price = utag_data["price"][0]
+        baseprice = utag_data["price"][0]
 
         unit = "Artikel"
 
@@ -141,6 +142,7 @@ def get_product_info(url):
             "id" : id,
             "unit" : unit,
             "price" : price, 
+            "baseprice" : baseprice,
             "category" : category,
             "imageURL" : imageURL,
             "original_link" : original_link,

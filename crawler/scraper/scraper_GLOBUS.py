@@ -14,8 +14,12 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
 
     list_products = soup.find_all("div", class_="card product-box box-standard")
 
-    with open("example_response_globus.html", "w", encoding="UTF-8") as file:
-        file.write(list_products[0].prettify())
+    # with open("example_response_globus.html", "w", encoding="UTF-8") as file:
+    #     file.write(list_products[0].prettify())
+
+    # with open("globus.html", "w", encoding="UTF-8") as file:
+    #     file.write(soup.prettify())
+    # return
 
     if show_product_to_search:
         if(len(list_products) == 0):
@@ -37,7 +41,6 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
     for product in list_products:
         try:
 
-        
             # IMAGE URL
             try:
                 image_wrapper = product.find("div", class_= "product-image-wrapper")
@@ -147,3 +150,4 @@ def getting_articles_from_shop(poduct_to_search, show_product_to_search = False)
 
 
 
+getting_articles_from_shop("mehl")
