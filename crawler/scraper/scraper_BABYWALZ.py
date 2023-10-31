@@ -62,6 +62,7 @@ def collect(url, categoryname):
                     title =  product_wrapper.find("div", class_ = "bw-product__name").text.strip()
 
                     name = brand + " " + subbrand + " " + title
+                    name = name.replace("  ", " ")
 
                     # print(name)
 

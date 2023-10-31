@@ -7,7 +7,7 @@ import re
 import time
 
 class CrawlerHandler:
-    def __init__(self, store, mapping_cat = mapper.mapping, with_id = False, show_prints =False):
+    def __init__(self, store, mapping_cat = mapper.mapping, with_id = False, show_prints =True):
         self.STORE_JSON = {}
         self.STORE_JSON_CURRENT_PRODUCTS = []
         self.STORE_JSON_CURRENT_IDS = []
@@ -231,6 +231,8 @@ class CrawlerHandler:
 
         for char in forbidden_characters:
             name = name.replace(char, "")
+        
+        name = name.replace("  ", " ")
         
         return name
 

@@ -5,7 +5,7 @@ import json
 from datetime import datetime, timedelta
 cwd = os.getcwd()
 
-SHOW_PRINT = False
+SHOW_PRINT = True
 
 info_dict = {
     "stores" : [],
@@ -14,7 +14,7 @@ info_dict = {
     "max_up_product" : {}
     }
 
-stores = ["REWE", "Kaufland", "AldiSued","dm", "Hellweg", "Globus", "IKEA", "Netto", "Fressnapf", "BabyWalz"]
+stores = ["Aldi Süd", "Baby Walz", "dm", "Hellweg", "Ikea", "Rewe"]
 #stores = ["Testing"]
 
 def get_current_date():
@@ -72,15 +72,23 @@ def get_path_info():
     json_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), json_relative_path))
     return json_file_path
 
+def add_thousands_separator(number):
+    # Verwende die Funktion format, um das 1000er Trennzeichen hinzuzufügen
+    formatted_number = '{:,}'.format(number).replace(',', '.')
+    # Gib das formatierte Ergebnis als String zurück
+    return formatted_number
 
 def do_stuff():
+    global stores
     today = get_current_date()
     yesterday = get_yesterday_date()
 
-    max_up_price_change_percent = 0.0
+    max_up_price_single_change_percent = 0.0
+    max_up_price_bulk_change_percent = 0.0
     max_up_price_change_product = {}
 
-    max_down_price_change_percent = 0.0
+    max_down_price_single_change_percent = 0.0
+    max_down_price_bulk_change_percent = 0.0
     max_down_price_change_product = {}
 
     products_total = 0
@@ -93,10 +101,9 @@ def do_stuff():
         }
 
         print("##############################################################")
-        print("Analyzing:", store.upper())
-        path_to_store_json = ""
+        print("Analyzing:", store)
         store_dict= {}
-        path_to_store_json = get_path_for_file(store.upper()+".json", 'jsons')
+        path_to_store_json = get_path_for_file(store+".json", 'jsons')
         path_to_info_json = get_path_info()
    
         print("Load JSON into Dict", end = "")
@@ -110,51 +117,55 @@ def do_stuff():
 
         for product in store_dict["products"]:
             products_total += 1
-            if product["dates"].get(yesterday) != None and product["dates"].get(today) != None:
+
+            # Es gibt einen EIntag für heute, also einen Price-Change
+            if product["price_changes"][-1]["date"] == today and len(product["price_changes"]) > 1:
+
                 try:
 
-                    price_today = filter_numerical_with_regex(product["dates"][today])
-                    price_yesterday = filter_numerical_with_regex(product["dates"][yesterday])
+                    price_single_today = float(filter_numerical_with_regex(product["price_changes"][-1]["price_single"]))
+                    price_bulk_today = float(filter_numerical_with_regex(product["price_changes"][-1]["price_bulk"]))
 
-                    price_today = float(price_today)
-                    price_yesterday = float(price_yesterday)
-                    imageURL = product["image"]
+                    price_single_before = float(filter_numerical_with_regex(product["price_changes"][-2]["price_single"]))
+                    price_bulk_before = float(filter_numerical_with_regex(product["price_changes"][-2]["price_bulk"]))
+
+                    imageURL = product["imageURL"]
                     category = product["category"]
 
-                    price_change = round(price_today - price_yesterday, 2)
+                    price_single_change = round(price_single_today - price_single_before, 2)
+                    price_bulk_change = round(price_bulk_today - price_bulk_before, 2)
 
-                    if price_today != 0 and price_yesterday != 0:
-                        if price_change != 0:
-                            direction = "u"
-
+                    if price_bulk_today != 0 and price_bulk_before != 0:
+                        if price_bulk_change != 0:
+                           
                             if SHOW_PRINT:
                                 print("+ ", product["name"], end = "")
                             
-                            if price_change > 0:
+                            if price_bulk_change > 0:
                                 direction = "up"
                                 
                             else:
                                 direction = "down"
 
                             
-                            price_percentage = round(price_change / price_yesterday * 100, 2)
+                            price_change_bulk_percentage = round(price_bulk_change / price_bulk_before * 100, 2)
 
                             #price_percentage =   price_change / price_yesterday * 100
                             if SHOW_PRINT:
-                                print("Percent:", price_percentage, "%", end = "")
+                                print("Percent:", price_change_bulk_percentage, "%", end = "")
                             
                             if SHOW_PRINT:
-                                print(" >> ", direction, price_change, "€ [",price_yesterday, " >", price_today, "]")
+                                print(" >> ", direction, price_bulk_change, "€ [",price_bulk_before, " >", price_bulk_today, "]")
                             # {product_name :  , price_yesterday : , price_today : , price_change, direction, original_link}
                             
                             product_changes = {
                                 "id" : product["id"],
                                 "unit" : product["unit"],
                                 "product_name": product["name"],
-                                "price_yesterday" : format_string(price_yesterday),
-                                "price_today" : format_string(price_today),
-                                "price_change" : format_string(price_change),
-                                "price_change_percentage" : format_string(price_percentage),
+                                "price_yesterday" : format_string(price_bulk_before),
+                                "price_today" : format_string(price_bulk_today),
+                                "price_change" : format_string(price_bulk_change),
+                                "price_change_percentage" : format_string(price_change_bulk_percentage),
                                 "direction" : direction,
                                 "original_link" :  product["original_link"],
                                 "category" : category,
@@ -163,30 +174,30 @@ def do_stuff():
                             }
 
                         
-                            if price_percentage > max_up_price_change_percent:
-                                max_up_price_change_percent = price_percentage
+                            if price_change_bulk_percentage > max_up_price_bulk_change_percent:
+                                max_up_price_bulk_change_percent = price_change_bulk_percentage
                                 max_up_price_change_product = product_changes
                         
                         
-                            if price_percentage < max_down_price_change_percent:
-                                max_down_price_change_percent = price_percentage
+                            if price_change_bulk_percentage < max_down_price_bulk_change_percent:
+                                max_down_price_bulk_change_percent = price_change_bulk_percentage
                                 max_down_price_change_product = product_changes
 
                             store_dict_to_merge["changes_to_yesterday"].append(product_changes)
                     else:
                         continue
                 except Exception as e:
-                    print(" not working", price_today, price_yesterday, e)
+                    print(" not working", price_bulk_today, price_bulk_before, e)
                     continue
 
         info_dict["stores"].append(store_dict_to_merge)
         
         ### AMOUNT PRODUCTS IN JSON
         products_in_json = len(store_dict["products"])
-        store_dict_to_merge["products_store_total"] = products_in_json
+        store_dict_to_merge["products_store_total"] = add_thousands_separator(products_in_json)
 
 
-    info_dict["products_total"] = products_total
+    info_dict["products_total"] = add_thousands_separator(products_total)
     info_dict["updated"] = get_current_date()
     info_dict["max_down_product"] = max_down_price_change_product
     info_dict["max_up_product"] = max_up_price_change_product
@@ -220,5 +231,30 @@ def saving_logs_for_today():
 
     print("Dailylog cleaned, saved everything in weblog")
 
+def add_historical_label():
+
+    if "home" in cwd:
+            historical_dates_json = "/home/SebastianChristoph/mysite/static/crawler/jsons/dates.json"
+    else:
+        historical_dates_json = os.path.join(cwd, "crawler\\jsons", "dates.json")
+    
+    with open(historical_dates_json, "r", encoding="utf-8") as file:
+        content = file.read()
+        historical_dates = json.loads(content)
+
+    current_date = get_current_date()
+
+    if current_date not in historical_dates["dates"]:
+        historical_dates["dates"].append(current_date)
+
+
+    with open(historical_dates_json, "w", encoding="utf-8") as file:
+        json.dump(historical_dates, file)
+
+
+
+
+
 do_stuff()
 saving_logs_for_today()
+add_historical_label()

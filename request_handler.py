@@ -45,22 +45,26 @@ class RequestHandler():
 
 
 
-    def search2(self,searchterm, search_in_which_stores, selected_stores):
+    def search2(self,searchterm, search_in_which_stores, selected_stores, filter):
 
         output = {}
         
         for store in self.store_data:
             found_products_store = []
-            print("search in", store)
+           
             if search_in_which_stores != "all" and store not in selected_stores:
-                print("continue")
                 continue
+           
         
             for product in self.store_data[store]["products"]:
-                if searchterm not in product["name"] and searchterm.lower() not in product["name"] and searchterm.upper() not in product["name"]:
+                product_name_lower = product["name"].lower()
+
+                if searchterm not in product_name_lower:
                     continue
+
+                
                 else:
-                    
+                
                     price_changes = []
 
                     first_price_bulk = product["price_changes"][0]["price_bulk"]
@@ -100,8 +104,17 @@ class RequestHandler():
                         "price_changes" : price_changes
                     }
 
+                    if filter == "all":
+                        found_products_store.append(product_dict)
+                    elif filter == "up":
+                        if product_dict["price_changes"][-1]["price_change"][2] == "up":
+                            found_products_store.append(product_dict)
+                    elif filter =="down":
 
-                    found_products_store.append(product_dict)
+                        if len(product_dict["price_changes"]) > 1 and  product_dict["price_changes"][-1]["price_change"][2] == "down":
+                            found_products_store.append(product_dict)
+
+
 
              # sort list
             sorted_products = sorted(found_products_store, key=lambda x: x["name"])        
@@ -115,7 +128,75 @@ class RequestHandler():
         
         return output
         
-        
+    def get_watchlist(self, products):
+        print("GET WATCHLIST")
+
+        output = {}
+
+        for product in products:
+
+            product_split = product.split(",")
+            id = str(product_split[1])
+            store_watchlist = str(product_split[0])
+
+           
+
+            if output.get(store_watchlist) != None:
+             
+                list_to_add = output[store_watchlist]
+            else:
+               
+                output[store_watchlist] = []
+                list_to_add = output[store_watchlist]
+
+    
+            for product in self.store_data[store_watchlist]["products"]:
+                if id == product["id"]:
+                   
+
+                    price_changes = []
+
+                    first_price_bulk = product["price_changes"][0]["price_bulk"]
+                    
+                    for i in range(0, len(product["price_changes"])):
+
+                        if i == 0:
+                            price_change = [0, 100, "down"]
+                        else:
+                            
+                            absolute_price_difference = float(product["price_changes"][i]["price_bulk"]) - float(product["price_changes"][i-1]["price_bulk"])
+                            relative_price_difference = round( 100 +(
+                                ((float(product["price_changes"][i]["price_bulk"]) - float(first_price_bulk)) / float(first_price_bulk)) * 100),2)
+                            
+                            # Berechnung des Trends
+                            trend = "up" if absolute_price_difference > 0 else ("down" if absolute_price_difference < 0 else "no_change")
+
+                            price_change = [absolute_price_difference, relative_price_difference, trend]
+                        
+                        price_event = {
+                            "date" : product["price_changes"][i]["date"],
+                            "price_single" : product["price_changes"][i]["price_single"],
+                            "price_bulk" : product["price_changes"][i]["price_bulk"],
+                            "price_change" : price_change
+                        }
+                        price_changes.append(price_event)
+
+
+
+                    product_dict = {
+                        "name" : product["name"],
+                        "id" : product["id"],
+                        "imageURL" : product["imageURL"],
+                        "original_link" : product["original_link"],
+                        "unit" : product["unit"],
+                        "category" : product["category"],
+                        "price_changes" : price_changes
+                    }
+
+                    list_to_add.append(product_dict)
+
+        return output
+       
 
     def load_data(self, stores):
 
